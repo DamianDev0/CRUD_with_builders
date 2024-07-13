@@ -45,14 +45,27 @@ class RegularUser extends User {
 
   renderRegular() {
     const $container = document.getElementById("container");
-    $container.innerHTML = "";
-    $container.innerHTML += /*html*/ `
+    $container.innerHTML = /*html*/`
         <h2 class="text-3xl font-semibold mb-4 text-white">Regular User</h2>
+        <div id="bookingsList" class="grid grid-cols-3 gap-9 max-w-full max-h-full"></div>
         <p>Welcome, ${this.name}!</p>
         <button onclick="User.logOut()">Logout</button>
-        `;
+
+    `;
+
+    const $logoutBtn = document.getElementById("logoutBtn");
+    $logoutBtn.addEventListener("click", this.logOut.bind(this));
+
+    // Mostrar las reservas inicialmente
+    Bookings.showBookings();
+  }
+
+  logOut() {
+    // Implementar la funcionalidad de logout aquí
+    console.log("Logging out...");
   }
 }
+
 
 class AdminUser extends User {
   constructor(name, email, role) {
@@ -65,48 +78,52 @@ class AdminUser extends User {
     $container.innerHTML += /*html*/ `
         <h2 class="py-4 text-2xl text-white ml-32">Create a Booking</h2>
 
-<div class="w-full  backdrop-blur p-6 rounded-lg 
- h-full grid grid-cols-2 gap-4">
+        <div class="w-full  backdrop-blur p-6 rounded-lg 
+                h-full grid grid-cols-2 gap-4 ">
 
-<div class="max-w-96  h-full text-white shadow-md">
-  <form id="bookingForm">
-    <label for="departure" class="block text-sm font-semibold
-     text-white">Departure:</label>
+        <div class="max-w-96 h-full text-white shadow-md">
+          <form id="bookingForm">
 
-    <input type="text" id="departure" name="departure" required 
-    class="mt-1 block w-full border rounded-md
-     border-gray-700/10 bg-black/20 shadow-sm p-1">
-    <br><br>
+            <label for="departure" class="block text-sm font-semibold
+            text-white">Departure:</label>
 
-    <label for="destination" class="block text-sm font-semibold
-     text-white">Destination:</label>
+          <input type="text" id="departure" name="departure" required 
+          class="mt-1 block w-full border rounded-md
+          border-gray-700/10 bg-black/20 shadow-sm p-1">
+          <br><br>
 
-    <input type="text" id="destination" name="destination" 
-    required class="mt-1 block w-full border rounded-md border-gray-700/10
-     bg-black/20 shadow-sm p-1">
-    <br><br>
+          <label for="destination" class="block text-sm font-semibold
+          text-white">Destination:</label>
 
-    <label for="date" class="block text-sm font-semibold
-     text-white">Date:</label>
+          <input type="text" id="destination" name="destination" 
+          required class="mt-1 block w-full border rounded-md border-gray-700/10
+          bg-black/20 shadow-sm p-1">
+          <br><br>
 
-    <input type="date" id="date" name="date" required class="mt-1 block w-full
-     border rounded-md border-gray-700/10 bg-black/20 shadow-sm p-1">
+          <label for="date" class="block text-sm font-semibold
+          text-white">Date:</label>
 
-    <br><br>
-    <label for="time" class="block text-sm font-semibold
-     text-white">Time:</label>
+          <input type="date" id="date" name="date" required class="mt-1 block w-full
+          border rounded-md border-gray-700/10 bg-black/20 shadow-sm p-1">
 
-    <input type="time" id="time" name="time" required class="mt-1 block 
-    w-full border rounded-md border-gray-700/10 bg-black/20 shadow-sm p-1">
+          <br><br>
+          <label for="time" class="block text-sm font-semibold
+          text-white">Time:</label>
 
-    <br><br>
-    <button type="submit" class="w-full bg-gradient-to-r from-rose-400 to-orange-300
-     text-white py-2 px-4 rounded-md my-4">Submit</button>
-  </form>
-</div>
-<div id="bookingsList" class="grid grid-cols-3 gap-2 space-y-1"></div>
-        <button class="text-white" onclick="User.logOut()">Logout</button>
-        `;
+          <input type="time" id="time" name="time" required class="mt-1 block 
+          w-full border rounded-md border-gray-700/10 bg-black/20 shadow-sm p-1">
+
+          <br><br>
+          <button type="submit" class="w-full bg-gradient-to-r from-rose-400 to-orange-300
+          text-white py-2 px-4 rounded-md my-4">Submit</button>
+        </form>
+      </div>
+      <div id="bookingsList" class="grid grid-cols-3 gap-9 max-w-full max-h-full"></div>
+            <div class="absolute right-1 z-20 top-0 mr-7">
+            <i class='bx bx-log-in text-2xl  text-orange-500' ></i>
+            <button class="text-white text-2xl font-extralight hover:text-orange-400" onclick="User.logOut()">Logout</button>
+      </div>
+              `;
     const $bookingForm = document.getElementById("bookingForm");
     const $departure = document.getElementById("departure");
     const $destination = document.getElementById("destination");
@@ -142,7 +159,7 @@ class AdminUser extends User {
 
 class Bookings {
   constructor(id, departure, destination, date, time) {
-    this.id = id;
+    this.id = Utilities.generateId();
     this.departure = departure;
     this.destination = destination;
     this.date = date;
@@ -179,22 +196,35 @@ class Bookings {
 
     const $container = document.getElementById("container");
     $container.innerHTML = /*html*/ `
-          <h2>Edit Booking</h2>
-          <form id="editBookingForm">
-            <label for="editDeparture">Departure:</label>
-            <input type="text" id="editDeparture" name="editDeparture" value="${booking.departure}" required>
+          <h2 class="py-4 text-2xl text-white ml-40">Edit Booking</h2>
+          <div class="max-w-96  h-full text-white shadow-md ml-11">
+                <form id="editBookingForm">
+            <label  class="block text-sm font-semibold
+            text-white" for="editDeparture">Departure:</label>
+            <input class="mt-1 block w-full
+          border rounded-md border-gray-700/10 bg-black/20 shadow-sm p-1" type="text" id="editDeparture" name="editDeparture" value="${booking.departure}" required>
             <br><br>
-            <label for="editDestination">Destination:</label>
-            <input type="text" id="editDestination" name="editDestination" value="${booking.destination}" required>
+            <label  class="block text-sm font-semibold
+            text-white" for="editDestination">Destination:</label>
+            <input class="mt-1 block w-full
+          border rounded-md border-gray-700/10 bg-black/20 shadow-sm p-1" type="text" id="editDestination" name="editDestination" value="${booking.destination}" required>
             <br><br>
-            <label for="editDate">Date:</label>
-            <input type="date" id="editDate" name="editDate" value="${booking.date}" required>
+            <label  class="block text-sm font-semibold
+            text-white" for="editDate">Date:</label>
+            <input class="mt-1 block w-full
+          border rounded-md border-gray-700/10 bg-black/20 shadow-sm p-1" type="date" id="editDate" name="editDate" value="${booking.date}" required>
             <br><br>
-            <label for="editTime">Time:</label>
-            <input type="time" id="editTime" name="editTime" value="${booking.time}" required>
+            <label class="block text-sm font-semibold
+            text-white" for="editTime">Time:</label>
+            <input class="mt-1 block w-full
+          border rounded-md border-gray-700/10 bg-black/20 shadow-sm p-1" type="time" id="editTime" name="editTime" value="${booking.time}" required>
             <br><br>
-            <button type="submit">Submit</button>
+            <button class="w-full bg-gradient-to-r from-rose-400 to-orange-300
+          text-white py-2 px-4 rounded-md my-4" type="submit">Submit</button>
           </form>
+
+          </div>
+          
         `;
 
     const $editBookingForm = document.getElementById("editBookingForm");
@@ -219,18 +249,31 @@ class Bookings {
     bookings.forEach((booking) => {
       const bookingElement = document.createElement("div");
       bookingElement.innerHTML = /*html*/ `
-        <div class="flex flex-col items-start justify-center">
-      <p><strong>Departure:</strong> ${booking.departure}</p>
-      <p><strong>Destination:</strong> ${booking.destination}</p>
-      <p><strong>Date:</strong> ${booking.date}</p>
-      <p><strong>Time:</strong> ${booking.time}</p>
-      <button onclick="Bookings.deleteBooking(${booking.id})">Delete</button>
-      <button onclick="Bookings.editBooking(${booking.id})">Edit</button>
-      <hr>
+  <div class="flex flex-col items-start justify-center text-black shadow-2xl bg-orange-300 rounded-xl p-2 md:w-full my-8">
+  <div>
+    <p><strong>Departure:</strong> ${booking.departure}</p>
+    <p><strong>Destination:</strong> ${booking.destination}</p>
+    <p><strong>Date:</strong> ${booking.date}</p>
+    <p><strong>Time:</strong> ${booking.time}</p>
+    <div class="flex justify-between mt-4">
+      <button class="p-2 bg-orange-200 font-bold rounded-xl" onclick="Bookings.deleteBooking(${booking.id})">Delete</button>
+      <button class="p-2 bg-orange-200 font-bold rounded-xl" onclick="Bookings.editBooking(${booking.id})">Edit</button>
     </div>
+  </div>
+</div>
+
+
         `;
       $bookingsList.appendChild(bookingElement);
     });
+  }
+
+  static saveReservation(id){
+    let bookings = JSON.parse(localStorage.getItem("bookings")) || [];
+    const booking = bookings.find((booking) => booking.id === id);
+
+
+
   }
 }
 
@@ -240,22 +283,37 @@ function registerForm() {
   $container.innerHTML = /*html*/ `
     <div class="flex items-center justify-center h-screen text-white">
         <div class="flex flex-col items-center justify-center w-full max-w-md bg-white/5 backdrop-blur p-6 rounded-lg shadow-md">
-            <h2 class="text-3xl font-semibold mb-4 text-white">Register</h2>
+            <h2 class="text-3xl font-semibold mb-4 text-white ">Register</h2>
+            <br>
             <form id="registerForm" class="w-full">
-                <label for="username" class="block text-sm font-semibold text-white">Username</label>
-                <input type="text" id="username" name="username" class="mt-1 block w-full border bg-black/20 border-gray-700/10 rounded-md shadow-sm p-2" required>
+
+              <div class="flex items-center"> <!-- Utilizamos flexbox para alinear verticalmente -->
+                <i class='bx bx-user relative top-1 mr-2 text-xl'></i> <!-- Ajustamos las clases del icono -->
+                <input type="text" id="username" name="username" class="mt-1 block w-full border bg-black/20
+                border-gray-700/10 rounded-md shadow-sm p-2" required placeholder="Username">
+             </div>
+
                 <br><br>
-                <label for="email" class="block text-sm font-semibold text-white">Email:</label>
-                <input type="email" id="email" name="email" class="mt-1 block w-full border rounded-md border-gray-700/10 bg-black/20 shadow-sm p-2" required>
+                <div class="flex items-center">
+                <i class='bx bx-envelope relative top-1 mr-2 text-xl' ></i>
+                <input type="email" id="email" name="email" class="mt-1 block w-full border rounded-md
+                 border-gray-700/10 bg-black/20 shadow-sm p-2" required placeholder="Email">
+                </div>
+                
                 <br><br>
-                <label for="role" class="text-sm font-semibold text-white">Role</label>
-                <select id="role" name="role" class="mt-1 block w-full border border-gray-700/10 bg-black/20 rounded-md shadow-sm p-2" required>
-                    <option value="" disabled selected class="">Select Role</option>
-                    <option value="Admin">Admin</option>
-                    <option value="Regular">Regular</option>
-                </select>
+               
+                <div class="flex items-center">
+                  <i class='bx bx-group relative top-1 mr-2 text-xl'></i>
+                  <select id="role" name="role" class="mt-1 block w-full border border-gray-700/10 bg-black/20 rounded-md shadow-sm p-2" required>
+                      <option value="" disabled selected>Select Role</option>
+                      <option value="Admin">Admin</option>
+                      <option value="Regular">Regular</option>
+                  </select>
+              </div>
                 <br><br>
-                <button type="submit" class="w-full bg-gradient-to-r from-rose-400 to-orange-300 text-white py-2 px-4 rounded-md">Submit</button>
+                <br><br>
+                <button type="submit" class="w-96 m-auto ml-5 bg-gradient-to-r from-rose-400
+                 to-orange-300 text-white py-2 px-4 rounded-md">Submit</button>
             </form>
         </div>
     </div>
