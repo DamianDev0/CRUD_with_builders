@@ -138,6 +138,8 @@ class AdminUser extends User {
       const date = $date.value;
       const time = $time.value;
 
+      console.log(departure)
+
       const booking = Bookings.createBooking(
         departure,
         destination,
@@ -164,7 +166,8 @@ class AdminUser extends User {
 
 // creamos la clase Bookings que contiene todos los metodos CRUD
 class Bookings {
-  constructor(departure, destination, date, time) {
+  constructor(id,departure, destination, date, time) {
+    this.id = id
     this.departure = departure;
     this.destination = destination;
     this.date = date;
@@ -269,7 +272,7 @@ class Bookings {
       bookingElement.innerHTML = /*html*/ `
 
         <div class="flex flex-col items-start justify-center text-black shadow-2xl
-         bg-orange-300 rounded-xl p-2 md:w-full my-8">
+         bg-orange-300 rounded-xl p-2 md:w-full my-8 grid-cols-2">
 
           <div>
             <p><strong>Departure:</strong> ${booking.departure}</p>
